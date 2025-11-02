@@ -1,0 +1,61 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: liquidata-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: liquidata123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - liquidata-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./liquidata-backend
+      dockerfile: Dockerfile
+    container_name: liquidata-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./liquidata-backend/public/uploads:/app/public/uploads
+      - ./liquidata-backend/logs:/app/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - liquidata-network
+
+  frontend:
+    build:
+      context: ./liquidata
+      dockerfile: Dockerfile
+    container_name: liquidata-frontend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - liquidata-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  liquidata-network:
+    name: liquidata-network
+    driver: bridge
