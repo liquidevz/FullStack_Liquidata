@@ -19,6 +19,7 @@ services:
       retries: 5
 
   backend:
+    image: liquidata-backend:latest
     build:
       context: ./liquidata-backend
       dockerfile: Dockerfile
@@ -41,6 +42,7 @@ services:
       - liquidata-network
 
   frontend:
+    image: liquidata-frontend:latest
     build:
       context: ./liquidata
       dockerfile: Dockerfile
