@@ -19,7 +19,9 @@ services:
       retries: 5
 
   backend:
-    build: ./liquidata-backend
+    build:
+      context: ./liquidata-backend
+      dockerfile: Dockerfile
     container_name: liquidata-backend
     restart: unless-stopped
     environment:
@@ -39,7 +41,9 @@ services:
       - liquidata-network
 
   frontend:
-    build: ./liquidata
+    build:
+      context: ./liquidata
+      dockerfile: Dockerfile
     container_name: liquidata-frontend
     restart: unless-stopped
     environment:
