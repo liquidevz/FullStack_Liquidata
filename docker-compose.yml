@@ -32,9 +32,6 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_secret_change_in_production}
     ports:
       - "5001:5001"
-    volumes:
-      - ./liquidata-backend/public/uploads:/app/public/uploads
-      - ./liquidata-backend/logs:/app/logs
     depends_on:
       mongodb:
         condition: service_healthy
